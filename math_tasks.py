@@ -63,7 +63,9 @@ def _g5_fractions_basic() -> Task:
     result = f1 + f2
     q = f"Berechne: {n1}/{d} + {n2}/{d} = ?"
     ans = f"{result.numerator}/{result.denominator}" if result.denominator != 1 else str(result.numerator)
-    return _make_task_str(q, ans, "fractions")
+    return _make_task_str(q, ans, "fractions", difficulty="leicht",
+                          hint="Brüche mit gleichem Nenner: Zähler addieren.",
+                          explanation=f"{n1}/{d} + {n2}/{d} = {ans}")
 
 
 def _g5_decimals() -> Task:
@@ -74,7 +76,9 @@ def _g5_decimals() -> Task:
         a, b = b, a
     result = round(eval(f"{a}{op}{b}"), 1)
     q = f"Berechne: {a} {op} {b} = ?"
-    return _make_task(q, result, "decimals", is_float=True)
+    return _make_task(q, result, "decimals", is_float=True, difficulty="leicht",
+                      hint="Rechne wie mit ganzen Zahlen, achte auf das Komma.",
+                      explanation=f"{a} {op} {b} = {result}")
 
 
 def _g5_word_problem() -> Task:
@@ -86,7 +90,9 @@ def _g5_word_problem() -> Task:
     b = random.randint(5, a - 1)
     q = (f"In einer Kiste sind {a} {items[0]} und {b} {items[1]}. "
          f"Wie viele Stücke sind insgesamt in der Kiste?")
-    return _make_task(q, a + b, "word_problems")
+    return _make_task(q, a + b, "word_problems", difficulty="leicht",
+                      hint="Addiere beide Mengen.",
+                      explanation=f"{a} + {b} = {a+b}")
 
 
 def _g5_divisibility() -> Task:
@@ -94,7 +100,9 @@ def _g5_divisibility() -> Task:
     m = random.randint(10, 30)
     product = n * m
     q = f"Ist {product} durch {n} teilbar? Wenn ja, was ist {product} ÷ {n}?"
-    return _make_task(q, m, "arithmetic")
+    return _make_task(q, m, "arithmetic", difficulty="leicht",
+                      hint=f"Teile {product} durch {n}.",
+                      explanation=f"{product} ÷ {n} = {m}")
 
 
 # ---------------------------------------------------------------------------
@@ -110,9 +118,13 @@ def _grade6() -> Task:
 def _g6_percentages() -> Task:
     base = random.choice([50, 100, 150, 200, 250, 300, 400, 500])
     pct = random.choice([10, 20, 25, 30, 50, 75])
-    result = base * pct // 100
+    result = base * pct / 100
+    is_float = result != int(result)
+    if not is_float:
+        result = int(result)
     q = f"Wie viel sind {pct}% von {base}?"
     return _make_task(q, result, "percentages", difficulty="mittel",
+                      is_float=is_float,
                       hint=f"Teile {base} durch 100 und multipliziere mit {pct}.",
                       explanation=f"{base} × {pct}/100 = {result}")
 
@@ -123,7 +135,9 @@ def _g6_negative() -> Task:
     op = random.choice(["+", "-", "*"])
     result = eval(f"({a}){op}({b})")
     q = f"Berechne: ({a}) {op} ({b}) = ?"
-    return _make_task(q, result, "negative_numbers")
+    return _make_task(q, result, "negative_numbers", difficulty="mittel",
+                      hint="Achte auf die Vorzeichen!",
+                      explanation=f"({a}) {op} ({b}) = {result}")
 
 
 def _g6_ratios() -> Task:
@@ -132,7 +146,9 @@ def _g6_ratios() -> Task:
     first_part = total * a // (a + b)
     q = (f"Teile {total} im Verhältnis {a}:{b}. "
          f"Wie groß ist der erste Teil?")
-    return _make_task(q, first_part, "ratios")
+    return _make_task(q, first_part, "ratios", difficulty="mittel",
+                      hint=f"Gesamt = {a}+{b} = {a+b} Teile.",
+                      explanation=f"{total} × {a}/{a+b} = {first_part}")
 
 
 def _g6_simple_equation() -> Task:
@@ -161,7 +177,9 @@ def _g6_fractions_mixed() -> Task:
         result = f1 + f2
         q = f"Berechne: {n1}/{d1} + {n2}/{d2} = ?"
     ans = f"{result.numerator}/{result.denominator}" if result.denominator != 1 else str(result.numerator)
-    return _make_task_str(q, ans, "fractions")
+    return _make_task_str(q, ans, "fractions", difficulty="mittel",
+                          hint="Brüche multiplizieren: Zähler×Zähler, Nenner×Nenner.",
+                          explanation=f"{ans}")
 
 
 # ---------------------------------------------------------------------------
@@ -179,7 +197,9 @@ def _g7_powers() -> Task:
     exp = random.randint(2, 4)
     result = base ** exp
     q = f"Berechne: {base}^{exp} = ?"
-    return _make_task(q, result, "powers")
+    return _make_task(q, result, "powers", difficulty="mittel",
+                      hint=f"Multipliziere {base} mit sich selbst {exp}-mal.",
+                      explanation=f"{base}^{exp} = {result}")
 
 
 def _g7_linear_equation() -> Task:
@@ -188,14 +208,11 @@ def _g7_linear_equation() -> Task:
         x = random.randint(-10, 10)
     a = random.randint(2, 8)
     b = random.randint(1, 20)
-    c = random.randint(1, 5)
-    d = a * x + b - c * x
-    coeff = a - c
-    q = f"Löse: {a}x + {b} = {c}x + {d + c * x - a * x + a * x}\n"
-    # Simplify: let's make it cleaner
     right_side = a * x + b
     q = f"Löse: {a}x + {b} = {right_side}\nx = ?"
-    return _make_task(q, x, "equations")
+    return _make_task(q, x, "equations", difficulty="mittel",
+                      hint=f"Bringe {b} auf die andere Seite.",
+                      explanation=f"{a}x = {right_side} - {b} = {right_side-b}, x = {right_side-b}/{a} = {x}")
 
 
 def _g7_geometry_triangle() -> Task:
@@ -205,10 +222,14 @@ def _g7_geometry_triangle() -> Task:
     q = (f"Berechne die Fläche eines Dreiecks.\n"
          f"Grundseite: {a} cm, Höhe: {h} cm\n"
          f"Fläche = ?")
+    hint = "Formel: (Grundseite × Höhe) / 2"
+    expl = f"{a} × {h} / 2 = {area}"
     if area == int(area):
-        return _make_task(q, int(area), "geometry", suffix=" cm²")
+        return _make_task(q, int(area), "geometry", suffix=" cm²",
+                          hint=hint, explanation=expl, difficulty="mittel")
     else:
-        return _make_task(q, area, "geometry", is_float=True, suffix=" cm²")
+        return _make_task(q, area, "geometry", is_float=True, suffix=" cm²",
+                          hint=hint, explanation=expl, difficulty="mittel")
 
 
 def _g7_geometry_rectangle() -> Task:
@@ -218,18 +239,26 @@ def _g7_geometry_rectangle() -> Task:
     if what == "perimeter":
         result = 2 * (a + b)
         q = f"Berechne den Umfang eines Rechtecks.\nSeiten: {a} cm und {b} cm\nUmfang = ?"
-        return _make_task(q, result, "geometry", suffix=" cm")
+        return _make_task(q, result, "geometry", suffix=" cm",
+                          hint="Formel: 2 × (a + b)",
+                          explanation=f"2 × ({a} + {b}) = 2 × {a+b} = {result}",
+                          difficulty="leicht")
     else:
         result = a * b
         q = f"Berechne die Fläche eines Rechtecks.\nSeiten: {a} cm und {b} cm\nFläche = ?"
-        return _make_task(q, result, "geometry", suffix=" cm²")
+        return _make_task(q, result, "geometry", suffix=" cm²",
+                          hint="Formel: a × b",
+                          explanation=f"{a} × {b} = {result}",
+                          difficulty="leicht")
 
 
 def _g7_polynomial() -> Task:
     a, b = random.randint(1, 5), random.randint(1, 5)
     result = a**2 + 2*a*b + b**2
     q = f"Vereinfache: ({a} + {b})² = ?"
-    return _make_task(q, result, "powers")
+    return _make_task(q, result, "powers", difficulty="mittel",
+                      hint=f"({a}+{b})² = ({a}+{b}) × ({a}+{b})",
+                      explanation=f"({a}+{b})² = {a+b}² = {result}")
 
 
 # ---------------------------------------------------------------------------
@@ -246,7 +275,9 @@ def _g8_roots() -> Task:
     perfect = random.choice([4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144])
     result = int(perfect ** 0.5)
     q = f"Berechne: √{perfect} = ?"
-    return _make_task(q, result, "roots")
+    return _make_task(q, result, "roots", difficulty="leicht",
+                      hint="Welche Zahl mal sich selbst ergibt diese Zahl?",
+                      explanation=f"{result} × {result} = {perfect}, also √{perfect} = {result}")
 
 
 def _g8_pythagorean() -> Task:
@@ -277,7 +308,9 @@ def _g8_quadratic() -> Task:
     b_str = f" - {abs(b_coeff)}x" if b_coeff < 0 else f" + {b_coeff}x"
     c_str = f" - {abs(c_coeff)}" if c_coeff < 0 else f" + {c_coeff}"
     q = f"Löse: x²{b_str}{c_str} = 0\nDie größere Lösung x = ?"
-    return _make_task(q, max(x1, x2), "quadratic")
+    return _make_task(q, max(x1, x2), "quadratic", difficulty="schwer",
+                      hint="Finde zwei Zahlen, deren Summe und Produkt passen.",
+                      explanation=f"x₁ = {min(x1,x2)}, x₂ = {max(x1,x2)}")
 
 
 def _g8_system() -> Task:
@@ -288,7 +321,9 @@ def _g8_system() -> Task:
          f"{a1}x + {b1}y = {c1}\n"
          f"x - y = {x - y}\n"
          f"x = ?")
-    return _make_task(q, x, "systems")
+    return _make_task(q, x, "systems", difficulty="schwer",
+                      hint="Drücke y durch x aus der 2. Gleichung aus.",
+                      explanation=f"x = {x}, y = {y}")
 
 
 def _g8_circle() -> Task:
@@ -299,7 +334,10 @@ def _g8_circle() -> Task:
          f"Radius: {r} cm\n"
          f"Fläche = ? (auf eine Dezimalstelle runden)")
     result = round(3.14 * r ** 2, 1)
-    return _make_task(q, result, "geometry", is_float=True, suffix=" cm²")
+    return _make_task(q, result, "geometry", is_float=True, suffix=" cm²",
+                      difficulty="mittel",
+                      hint="Formel: π × r²",
+                      explanation=f"3.14 × {r}² = 3.14 × {r**2} = {result}")
 
 
 # ---------------------------------------------------------------------------
@@ -321,7 +359,9 @@ def _g9_probability() -> Task:
          f"Wie groß ist die Wahrscheinlichkeit, eine rote Kugel zu ziehen?\n"
          f"Antwort als Bruch:")
     ans = f"{prob.numerator}/{prob.denominator}" if prob.denominator != 1 else str(prob.numerator)
-    return _make_task_str(q, ans, "probability")
+    return _make_task_str(q, ans, "probability", difficulty="mittel",
+                          hint=f"P = günstige / mögliche = {favorable}/{total}",
+                          explanation=f"{favorable}/{total} = {ans}")
 
 
 def _g9_arithmetic_seq() -> Task:
@@ -332,7 +372,9 @@ def _g9_arithmetic_seq() -> Task:
     q = (f"Arithmetische Folge:\n"
          f"Erstes Glied a₁ = {a1}, Differenz d = {d}.\n"
          f"Berechne das {n}. Glied:")
-    return _make_task(q, an, "sequences")
+    return _make_task(q, an, "sequences", difficulty="mittel",
+                      hint=f"Formel: a₁ + (n-1) × d",
+                      explanation=f"{a1} + ({n}-1) × {d} = {a1} + {(n-1)*d} = {an}")
 
 
 def _g9_geometric_seq() -> Task:
@@ -343,7 +385,9 @@ def _g9_geometric_seq() -> Task:
     q = (f"Geometrische Folge:\n"
          f"Erstes Glied a₁ = {a1}, Quotient q = {r}.\n"
          f"Berechne das {n}. Glied:")
-    return _make_task(q, an, "sequences")
+    return _make_task(q, an, "sequences", difficulty="schwer",
+                      hint=f"Formel: a₁ × q^(n-1)",
+                      explanation=f"{a1} × {r}^{n-1} = {a1} × {r**(n-1)} = {an}")
 
 
 def _g9_linear_function() -> Task:
@@ -353,7 +397,9 @@ def _g9_linear_function() -> Task:
     y = k * x + b
     q = (f"Lineare Funktion: f(x) = {k}x {'+' if b >= 0 else '-'} {abs(b)}\n"
          f"Berechne f({x}) = ?")
-    return _make_task(q, y, "linear_functions")
+    return _make_task(q, y, "linear_functions", difficulty="mittel",
+                      hint=f"Setze x = {x} in die Formel ein.",
+                      explanation=f"f({x}) = {k}×{x} {'+' if b >= 0 else '-'} {abs(b)} = {y}")
 
 
 def _g9_statistics() -> Task:
@@ -364,9 +410,14 @@ def _g9_statistics() -> Task:
          f"{nums_str}\n"
          f"Mittelwert = ?")
     if avg == int(avg):
-        return _make_task(q, int(avg), "statistics")
+        return _make_task(q, int(avg), "statistics", difficulty="leicht",
+                          hint="Addiere alle Zahlen und teile durch die Anzahl.",
+                          explanation=f"({'+'.join(str(n) for n in numbers)}) / {len(numbers)} = {int(avg)}")
     else:
-        return _make_task(q, round(avg, 1), "statistics", is_float=True)
+        return _make_task(q, round(avg, 1), "statistics", is_float=True,
+                          difficulty="leicht",
+                          hint="Addiere alle Zahlen und teile durch die Anzahl.",
+                          explanation=f"({'+'.join(str(n) for n in numbers)}) / {len(numbers)} = {round(avg,1)}")
 
 
 # ---------------------------------------------------------------------------
