@@ -16,6 +16,7 @@ from messages import (
     WELCOME, HELP, CHOOSE_GRADE, GRADE_SET, NO_GRADE,
     CORRECT, WRONG, SCORE_RESET, NO_SCORE,
     TASK_HEADER, TOPIC_NAMES,
+    STREAK_LINE, STREAK_RECORD, SCORE_BEST_STREAK,
 )
 
 load_dotenv()
@@ -38,6 +39,8 @@ KEY_EXPLANATION = "current_explanation"
 KEY_QUESTION = "current_question"
 KEY_DIFFICULTY = "difficulty"
 KEY_DAILY_DATE = "daily_date"
+KEY_STREAK = "streak"
+KEY_BEST_STREAK = "best_streak"
 
 
 def _get_stats(ctx, grade) -> dict:
@@ -209,11 +212,23 @@ async def cb_answer(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
     st = _get_stats(ctx, grade)
     st["total"] += 1
 
+    streak = ctx.user_data.get(KEY_STREAK, 0)
+    best = ctx.user_data.get(KEY_BEST_STREAK, 0)
+
     if user_answer == correct_answer:
         st["correct"] += 1
+        streak += 1
         response = random.choice(CORRECT)
+        if streak > best:
+            best = streak
+            if streak >= 3:
+                response += f"\n{STREAK_RECORD}"
     else:
+        streak = 0
         response = WRONG.format(answer=correct_answer)
+
+    ctx.user_data[KEY_STREAK] = streak
+    ctx.user_data[KEY_BEST_STREAK] = best
 
     # Add explanation
     if explanation:
@@ -222,6 +237,8 @@ async def cb_answer(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
     # Stats
     grade_label = "Knobel" if grade == 0 else f"Klasse {grade}"
     response += f"\n\n📊 {grade_label}: {st['correct']}/{st['total']}"
+    if streak >= 2:
+        response += f"\n{STREAK_LINE.format(streak=streak)}"
 
     # "Next task" button
     keyboard = [[InlineKeyboardButton("➡️ Nächste Aufgabe", callback_data="next")]]
@@ -275,11 +292,17 @@ async def cmd_score(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
         total_rate = round(total_correct / total_all * 100)
         lines.append(f"\n  Gesamt: {total_correct}/{total_all} ({total_rate}%)")
 
+    best = ctx.user_data.get(KEY_BEST_STREAK, 0)
+    if best > 0:
+        lines.append(f"  {SCORE_BEST_STREAK.format(best=best)}")
+
     await update.message.reply_text("\n".join(lines))
 
 
 async def cmd_reset(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
     ctx.user_data[KEY_STATS] = {}
+    ctx.user_data[KEY_STREAK] = 0
+    ctx.user_data[KEY_BEST_STREAK] = 0
     await update.message.reply_text(SCORE_RESET)
 
 

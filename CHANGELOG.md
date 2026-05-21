@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Streak counter — consecutive correct answers shown after each task (from 2 in a row), with a 🏆 "Neuer Rekord!" message when you beat your personal best. The longest streak is listed in `/punkte`. `/zuruecksetzen` also clears it.
 - `CHANGELOG.md` (this file).
 - `CLAUDE.md` for future Claude Code sessions.
 - `DEPLOY.md` with Hetzner VPS + SSH + systemd setup instructions.

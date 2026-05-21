@@ -59,6 +59,10 @@ NO_SCORE = "Du hast noch keine Aufgaben gelöst. Starte mit /quiz!"
 
 TASK_HEADER = "📝 Klasse {grade} — Aufgabe\n\n"
 
+STREAK_LINE = "🔥 Serie: {streak}"
+STREAK_RECORD = "🏆 Neuer Rekord!"
+SCORE_BEST_STREAK = "🔥 Längste Serie: {best}"
+
 TOPIC_NAMES = {
     "arithmetic": "Grundrechenarten",
     "fractions": "Brüche",
