@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `deploy/mathe-bot.service` — systemd unit file for running the bot in production.
 - `.github/workflows/deploy.yml` — CI/CD pipeline (syntax check + SSH deploy on push to `main`).
 
+### Changed
+- Excluded `DEPLOY.TASK.md` (one-off task notes) from version control.
+
 ## [0.2.0] — 2026-04-24
 
 ### Fixed

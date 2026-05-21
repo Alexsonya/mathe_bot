@@ -5,3 +5,4 @@ venv/
 .venv/
 .idea/
 bot_data.pickle
+DEPLOY.TASK.md
