@@ -1,0 +1,28 @@
+[Unit]
+Description=Mathe-Quiz Telegram Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=mathebot
+Group=mathebot
+WorkingDirectory=/home/mathebot/mathe_bot
+EnvironmentFile=/home/mathebot/mathe_bot/.env
+ExecStart=/home/mathebot/mathe_bot/.venv/bin/python3 bot.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/mathebot/mathe_bot
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target
