@@ -1,5 +1,7 @@
 # Mathe-Quiz Telegram Bot 🎓
 
+[![deploy](https://github.com/Alexsonya/mathe_bot/actions/workflows/deploy.yml/badge.svg)](https://github.com/Alexsonya/mathe_bot/actions/workflows/deploy.yml)
+
 Ein interaktiver Telegram-Bot zum Üben von Mathematik für die Klassenstufen 5–9 mit Knobelaufgaben, Hinweisen und Erklärungen.
 
 > Das Projekt wurde auf Deutsch umgesetzt, um meine Sprachkenntnisse im IT-Kontext zu verbessern.

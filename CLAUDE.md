@@ -16,34 +16,6 @@ python3 bot.py                     # run (long-polling)
 
 No test suite, no linter, no build step. Verifying changes means running the bot and exercising the affected flow in Telegram.
 
-## Architecture
-
-Three modules, each with a single responsibility:
-
-- **`bot.py`** — Telegram handlers + per-user state. The handler chain is `cmd_choose_grade` → `cb_set_grade` (writes `KEY_GRADE`) → `cb_set_difficulty` (writes `KEY_DIFFICULTY`) → `/quiz` → `_send_task`. After an answer, `cb_next` regenerates a task inline; the prior message is replaced with `"—"` so old answer buttons can't be reused. All user state goes through the `KEY_*` constants — don't introduce new keys ad-hoc.
-- **`math_tasks.py`** — Task generation. Pure functions, no Telegram imports. `generate_task(grade, difficulty)` dispatches via `GRADE_GENERATORS` (0=Knobel, 5–9=grade). Difficulty filtering is best-effort: it retries the generator up to 10 times to match, then falls back to whatever comes out.
-- **`messages.py`** — All German UI strings + `TOPIC_NAMES` (English topic key → German label). Anything user-visible belongs here, not inline in `bot.py`.
-
-### The `Task` contract
-
-Every generator returns a `Task` dataclass with: `question`, `answer` (string), `options` (4 strings including the correct one), `topic` (one of the keys in `TOPIC_NAMES`), `hint`, `explanation`, `difficulty` (`"leicht"`/`"mittel"`/`"schwer"`).
-
-Use the helpers — don't build `Task` by hand unless you need custom options:
-- `_make_task(...)` — numeric answer; auto-generates 3 plausible wrong options via `_generate_options` (nearby integers + ±10–20% offsets).
-- `_make_task_str(...)` — string answer (e.g. fractions `"3/4"`); generates wrong options by perturbing numerator/denominator.
-
-If you add a topic key, also add a German label to `TOPIC_NAMES` in `messages.py` — otherwise the topic shows as a raw English string.
-
-### Adding a new task generator
-
-1. Write `_gN_<topic>() -> Task` returning via `_make_task` / `_make_task_str`.
-2. Append it to the `generators` list inside the corresponding `_gradeN()` / `_knobel()`.
-3. Pick a sensible `difficulty=` so the difficulty filter has something to match.
-
-### Daily challenge
-
-`generate_daily()` seeds Python's RNG with a hash of today's ISO date so every user gets the same task. It restores the global RNG state afterward — keep that pattern if you touch it, or concurrent quiz tasks will become deterministic too.
-
 ## German UI convention
 
 The bot is German-facing (B1–B2). Keep all user-visible strings in `messages.py` or inline German in task `question`/`hint`/`explanation`. Code identifiers, comments, and topic keys stay English. Slash commands have both German and English aliases (`/hilfe` + `/help`, `/punkte`, `/zuruecksetzen` + `/reset`, `/tagesaufgabe` + `/daily`) — preserve both when adding commands.
